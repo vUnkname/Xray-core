@@ -112,6 +112,13 @@ jobs:
             goarch: amd64
             patch-assetname: android-amd64
           # END Android AMD64
+          # BEGIN Android ARM 32-bit and x86
+          - goos: android
+            goarch: arm
+            goarm: 7
+          - goos: android
+            goarch: "386"
+          # END Android ARM 32-bit and x86
           # Windows ARM
           - goos: windows
             goarch: arm64
@@ -181,6 +188,8 @@ jobs:
           declare -A arches=(
             ["amd64"]="x86_64-linux-android24-clang"
             ["arm64"]="aarch64-linux-android24-clang"
+            ["arm"]="armv7a-linux-androideabi24-clang"
+            ["386"]="i686-linux-android24-clang"
           )
           echo CC="$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin)/${arches[${{ matrix.goarch }}]}" >> $GITHUB_ENV
           echo CGO_ENABLED=1 >> $GITHUB_ENV
