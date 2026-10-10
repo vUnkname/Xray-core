@@ -1,0 +1,43 @@
+# Merge patterniha/Xray-core main into vUnkname/Xray-core main.
+# Keeps vUnkname-specific commits (Android release matrix, etc.) on top of patterniha.
+name: Sync patterniha main
+
+on:
+  schedule:
+    # Daily 04:00 UTC (~07:30 Tehran)
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-patterniha-main
+  cancel-in-progress: false
+
+jobs:
+  merge-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch patterniha main
+        run: |
+          git remote add patterniha https://github.com/patterniha/Xray-core.git
+          git fetch patterniha main
+
+      - name: Merge patterniha/main
+        run: |
+          git merge patterniha/main --no-edit -m "Merge remote-tracking branch 'patterniha/main' from patterniha/Xray-core"
+
+      - name: Push to origin main
+        run: git push origin HEAD:main
